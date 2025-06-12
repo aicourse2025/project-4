@@ -52,14 +52,21 @@ As the data was quite imbalances and heavily biased towards 5 start ratings, it 
 - Uses Elbow method to determine the optimal number of clusters clusters and determine 
 - Uses Silhouette analysis to determinethe cohesion of clusters and the distance between them.
 - Findings: 4 clusters is better because it provides a better balance between model simplicity and cluster quality than 5. The silhouette score is also higher with 4 clusters, indicating more distinct and well-separated groups, while adding a fifth cluster leads to more overlap and less meaningful segmentation.
-
 - Then we filtered the dataset rows to find the most frequent category of the cluster and assigned the top 5 clusters names that correspond to their most prominent themes and adds a new column with category names to the dataset. 
 
 ## Classifying the Reviews classify-customer-reviews.ipynb
 
 - First we created a Naive Bayes model and trained it on the training data. We used MultinomialNB because it is ideal for text-based classification with TF-IDF features, modeling word counts per class.
 - Then we made predictions on both training and test data to assess performance
-
 - We used the XGBoost model for grid search to determine the optimal hyper parameters
-
 - Then we extracted the best estimator that’s been retrained on all of X_train with optimal parameters.
+
+## Top 3 Product Selector top3_product_selector.ipynb
+
+- We grouped the clustered and classified data by ASIN and aggregated the data with different rules
+- We calculated Bayesian-style weighted score
+- Filtered reviews for top products
+- Categorized review sentiment
+- Consolidated sample reviews by sentiment
+
+## Summary Fine Tuning summary-fine-tuning.ipynb
