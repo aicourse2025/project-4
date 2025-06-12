@@ -55,3 +55,11 @@ As the data was quite imbalances and heavily biased towards 5 start ratings, it 
 
 - Then we filtered the dataset rows to find the most frequent category of the cluster and assigned the top 5 clusters names that correspond to their most prominent themes and adds a new column with category names to the dataset. 
 
+## Classifying the Reviews classify-customer-reviews.ipynb
+
+- First we created a Naive Bayes model and trained it on the training data. We used MultinomialNB because it is ideal for text-based classification with TF-IDF features, modeling word counts per class.
+- Then we made predictions on both training and test data to assess performance
+
+- We used the XGBoost model for grid search to determine the optimal hyper parameters
+
+- Then we extracted the best estimator that’s been retrained on all of X_train with optimal parameters.
