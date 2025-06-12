@@ -42,6 +42,16 @@ We used TFidfVectorization to encode text into numeric features that emphasize p
 ### Handle Imbalanced Data
 As the data was quite imbalances and heavily biased towards 5 start ratings, it was necessary to address class imbalance by generating synthetic samples for underrepresented classes with SMOTE
 
-
 ## Clustering the data: cluster-product-categories.ipynb
+
+### Embeddings
+- Uses embeddings to transform the unstructured data into numerical representations so that the model can understand the semantic meaning and relationship between words and phrases.
+
+### Setting Up K‑Means Clustering
+- Uses k-means clustering to track the relationship between the data, and group together similar reviews.
+- Uses Elbow method to determine the optimal number of clusters clusters and determine 
+- Uses Silhouette analysis to determinethe cohesion of clusters and the distance between them.
+- Findings: 4 clusters is better because it provides a better balance between model simplicity and cluster quality than 5. The silhouette score is also higher with 4 clusters, indicating more distinct and well-separated groups, while adding a fifth cluster leads to more overlap and less meaningful segmentation.
+
+- Then we filtered the dataset rows to find the most frequent category of the cluster and assigned the top 5 clusters names that correspond to their most prominent themes and adds a new column with category names to the dataset. 
 
