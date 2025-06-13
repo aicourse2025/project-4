@@ -9,3 +9,8 @@ matplotlib
 sentencepiece
 dotenv
 openai
+torch
+transformers
+bitsandbytes
+peft
+accelerate
