@@ -1,3 +1,7 @@
+"""
+AWS Lambda handler to run inference
+"""
+
 import json
 import boto3
 import pandas as pd
@@ -6,16 +10,17 @@ import pandas as pd
 runtime_client = boto3.client('sagemaker-runtime')
 
 # SageMaker endpoint configuration
-endpoint_name = "jumpstart-dft-llama-3-1-8b-instruct-20250613-043314"
+ENDPOINT_NAME = "jumpstart-dft-llama-3-1-8b-instruct-20250613-043314"
 
 # CORS headers for API responses
 CORS_HEADERS = {
     'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
+    'Access-Control-Allow-Headers':
+    'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent',
     'Access-Control-Allow-Methods': 'POST,OPTIONS'
 }
 
-def get_product_by_id(id):
+def get_product_by_id(prod_id):
     """
     Retrieves a product from the CSV file based on its ID.
     
@@ -27,8 +32,8 @@ def get_product_by_id(id):
     """
     # Load and filter product data
     csv_data = pd.read_csv("./data/top3_products.csv")
-    filtered_data = csv_data[csv_data['asins'].astype(str) == str(id)]
-    
+    filtered_data = csv_data[csv_data['asins'].astype(str) == str(prod_id)]
+
     if filtered_data.empty:
         return None
     return filtered_data.iloc[0]
@@ -45,8 +50,8 @@ def safe_strip(value):
     """
     if isinstance(value, str):
         return value.strip()
-    else:
-        return ""
+
+    return ""
 
 def get_top3_products_by_category(category):
     """
@@ -62,7 +67,7 @@ def get_top3_products_by_category(category):
     filtered_data = csv_data[csv_data['cluster_name'] == category]
     return filtered_data
 
-def generate_final_summary_prompt(category, summaries):
+def generate_final_summary_prompt(summaries):
     """
     Generates a prompt for creating a final summary of multiple product summaries.
     
@@ -74,7 +79,7 @@ def generate_final_summary_prompt(category, summaries):
         str: Formatted prompt for the language model
     """
     # Base prompt template for final summary
-    prompt = f"""You are given three product summaries describing similar products.
+    prompt = """You are given three product summaries describing similar products.
 
 Your task is to:
 
@@ -89,8 +94,8 @@ Please follow these instructions:
 """
 
     # Add individual summaries to the prompt
-    for i, sum in enumerate(summaries):
-        prompt += f"Summary {i + 1}:\n\n{sum}\n\n"
+    for i, sumary in enumerate(summaries):
+        prompt += f"Summary {i + 1}:\n\n{sumary}\n\n"
 
     prompt += "---\n\nReturn ONLY the article. Do NOT check the grammar or add anything else."
 
@@ -112,7 +117,8 @@ def generate_product_summary_prompt(product):
     negative = safe_strip(product.get('negative_reviews', ''))
 
     prompt = (
-        "Summarize the following product briefly and concisely. Highlight its most important features, advantages, and possible disadvantages.\n\n"
+        "Summarize the following product briefly and concisely. ",
+        "Highlight its most important features, advantages, and possible disadvantages.\n\n"
         "---\n\n"
         f"{name}\n\n"
         f"Positive:{positive}\n\n"
@@ -121,7 +127,7 @@ def generate_product_summary_prompt(product):
         "Return the summary in one single paragraph in correct English."
     )
 
-    return prompt    
+    return prompt
 
 def call_model(prompt, max_new_tokens):
     """
@@ -136,14 +142,14 @@ def call_model(prompt, max_new_tokens):
 
     # Call the model and parse response
     response = runtime_client.invoke_endpoint(
-        EndpointName=endpoint_name,
+        EndpointName=ENDPOINT_NAME,
         ContentType='application/json',
         Body=json.dumps({"inputs": prompt, "parameters": { "max_new_tokens": max_new_tokens }})
     )
     result_str = response['Body'].read().decode('utf-8')
     return json.loads(result_str)
 
-def lambda_handler(event, context):
+def lambda_handler(event, _):
     """
     AWS Lambda handler function that processes incoming requests.
     
@@ -157,21 +163,21 @@ def lambda_handler(event, context):
     # Parse request body
     body = json.loads(event.get("body", "{}"))
     category = body.get("category", "")
-    productId = body.get("id", "")
+    product_id = body.get("id", "")
     summaries = body.get("summaries", [])
 
     try:
         # Handle single product summary request
-        if len(productId) > 0:
-            product = get_product_by_id(productId)
+        if len(product_id) > 0:
+            product = get_product_by_id(product_id)
             prompt = generate_product_summary_prompt(product)
-            result = call_model(prompt, 500)
+            result = call_model(prompt, 400)
             return {
                 "statusCode": 200,
                 'headers': CORS_HEADERS,
                 "body": json.dumps(result)
             }
-        
+
         # Validate input for final summary
         if len(summaries) == 0 | len(category) == 0:
             return {
@@ -179,20 +185,20 @@ def lambda_handler(event, context):
                 'headers': CORS_HEADERS,
                 "body": json.dumps({"error": "Summaries and/or category are/is missing!"})
             }
-        
+
         # Generate and return final summary
-        prompt = generate_final_summary_prompt(category, summaries)
-        result = call_model(prompt, 800)
-    
+        prompt = generate_final_summary_prompt(summaries)
+        result = call_model(prompt, 500)
+
         return {
             "statusCode": 200,
             'headers': CORS_HEADERS,
             "body": json.dumps(result)
         }
-    
+
     except Exception as e:
         return {
             "statusCode": 500,
             'headers': CORS_HEADERS,
-            "body": json.dumps({"error": str(e)})
+            "body": json.dumps({"error": f"Unexpected error: {str(e)}"})
         }

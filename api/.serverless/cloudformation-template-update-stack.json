@@ -178,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/sageMakerLambdaService/dev/1749790416262-2025-06-13T04:53:36.262Z/sageMakerLambdaService.zip"
+          "S3Key": "serverless/sageMakerLambdaService/dev/1749793060079-2025-06-13T05:37:40.079Z/sageMakerLambdaService.zip"
         },
         "Handler": "handler.lambda_handler",
         "Runtime": "python3.8",
@@ -201,14 +201,14 @@
         "InvokeSageMakerLogGroup"
       ]
     },
-    "InvokeSageMakerLambdaVersion9KrdiH96Hl5GF8GaTqByYzTQvs665DnsTisVeDksE": {
+    "InvokeSageMakerLambdaVersionVI6mItyrNYMgsosB6GGqhq7ewJfLOWttxU1hqFpdQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "InvokeSageMakerLambdaFunction"
         },
-        "CodeSha256": "BGDqYzjuI8eKXvwzEWx4dS4CAoIMvkW+PMGgwJxwByI="
+        "CodeSha256": "xbydgVgns37pa0IUN5lndguIYvZvp+9x/UFlddSKvbY="
       }
     },
     "ApiGatewayRestApi": {
@@ -329,7 +329,7 @@
         "InvokeSageMakerLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1749790393379": {
+    "ApiGatewayDeployment1749793037457": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -392,7 +392,7 @@
     "InvokeSageMakerLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "InvokeSageMakerLambdaVersion9KrdiH96Hl5GF8GaTqByYzTQvs665DnsTisVeDksE"
+        "Ref": "InvokeSageMakerLambdaVersionVI6mItyrNYMgsosB6GGqhq7ewJfLOWttxU1hqFpdQ"
       },
       "Export": {
         "Name": "sls-sageMakerLambdaService-dev-InvokeSageMakerLambdaFunctionQualifiedArn"
