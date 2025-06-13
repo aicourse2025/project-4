@@ -1,0 +1,45 @@
+service: sageMakerLambdaService
+
+provider:
+  name: aws
+  runtime: python3.8
+  region: eu-central-1
+  environment:
+    ENDPOINT_NAME: jumpstart-dft-llama-3-1-8b-instruct-20250613-043314
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - sagemaker:InvokeEndpoint
+          Resource: 
+            - arn:aws:sagemaker:${self:provider.region}:*:endpoint/${self:provider.environment.ENDPOINT_NAME}
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource: "*"
+
+functions:
+  invokeSageMaker:
+    handler: handler.lambda_handler
+    timeout: 30
+    events:
+      - http:
+          path: invoke
+          method: post
+          cors: true
+
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true   
+    slim: true
+    strip: false     
+    useStaticCache: true
+    useDownloadCache: true  
