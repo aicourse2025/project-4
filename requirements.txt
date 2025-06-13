@@ -6,3 +6,6 @@ nltk
 imblearn
 sentence_transformers
 matplotlib
+sentencepiece
+dotenv
+openai
