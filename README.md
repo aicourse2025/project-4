@@ -3,6 +3,15 @@
 **Objective**
 This project uses an Amazon products review database as a source from which to generate article summaries with an LLM in the style of a blog article summary and review of a product.
 
+## Dataset
+We could choose between two sets of data.
+
+1. https://www.kaggle.com/datasets/datafiniti/consumer-reviews-of-amazon-products/data
+2. https://cseweb.ucsd.edu/~jmcauley/datasets.html#amazon_reviews 
+
+We chose the first one because it was much smaller and easier to handle. But it still had enough data records to be able to work with it properly.
+
+
 ## Table of Contents
 1. [Notebooks](#notebooks)
    - [Preprocessing](#preprocessing-preproccessingipynb)
