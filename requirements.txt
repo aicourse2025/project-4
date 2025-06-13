@@ -1,1 +1,8 @@
 pylint
+scikit-learn
+xgboost
+kagglehub
+nltk
+imblearn
+sentence_transformers
+matplotlib
